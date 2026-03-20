@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>La Stellina &mdash; Ristorante Italiano</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{--green:#1B5E20;--green-mid:#2E7D32;--green-light:#4CAF50;--red:#B71C1C;--red-mid:#C62828;--white:#FFFDF7;--cream:#F5F0E0;--gold:#D4A017;--gold-light:#F0C040;--dark:#0D0D0D;--charcoal:#1A1A1A;--text-muted:#7a7060}
+    html{scroll-behavior:smooth}
+    body{background:var(--white);color:var(--dark);font-family:"EB Garamond",serif;overflow-x:hidden}
+    .flag-stripe{display:flex;height:5px;width:100%;position:fixed;top:0;left:0;z-index:300}
+    .flag-stripe div{flex:1}.flag-stripe .s1{background:var(--green)}.flag-stripe .s2{background:#fff}.flag-stripe .s3{background:var(--red)}
+    .lang-bar{position:fixed;top:5px;left:0;right:0;z-index:200;background:var(--dark);display:flex;justify-content:flex-end;align-items:center;padding:7px 64px;gap:12px}
+    .lang-label{font-family:"Cinzel",serif;font-size:.57rem;letter-spacing:.22em;color:rgba(255,255,255,.3);text-transform:uppercase}
+    .lang-toggle{display:flex;border:1px solid rgba(255,255,255,.15);border-radius:2px;overflow:hidden}
+    .lang-btn{font-family:"Cinzel",serif;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;padding:6px 16px;border:none;background:transparent;color:rgba(255,255,255,.45);cursor:pointer;transition:background .25s,color .25s;display:flex;align-items:center;gap:7px}
+    .lang-btn.active{background:var(--gold);color:var(--dark);font-weight:700}
+    .lang-btn:not(.active):hover{background:rgba(255,255,255,.08);color:#fff}
+    .lang-sep{width:1px;background:rgba(255,255,255,.12)}
+    nav{position:fixed;top:35px;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:18px 64px;background:rgba(255,253,247,.97);border-bottom:2px solid transparent;transition:border-color .4s,box-shadow .4s}
+    nav.scrolled{border-bottom-color:var(--gold);box-shadow:0 4px 32px rgba(0,0,0,.08)}
+    .nav-logo{font-family:"Cinzel",serif;font-size:1.45rem;font-weight:700;letter-spacing:.12em;color:var(--green);text-decoration:none}
+    .nav-logo .dot{color:var(--red)}
+    .nav-links{display:flex;gap:34px;list-style:none}
+    .nav-links a{text-decoration:none;color:var(--charcoal);font-family:"Cinzel",serif;font-size:.63rem;letter-spacing:.18em;text-transform:uppercase;position:relative;padding-bottom:4px;transition:color .3s}
+    .nav-links a::after{content:"";position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--red);transition:width .3s}
+    .nav-links a:hover{color:var(--red)}.nav-links a:hover::after{width:100%}
+    .nav-cta{font-family:"Cinzel",serif;font-size:.63rem;letter-spacing:.14em;text-transform:uppercase;background:var(--red);color:#fff;padding:11px 26px;text-decoration:none;border:2px solid var(--red);transition:background .3s,color .3s}
+    .nav-cta:hover{background:transparent;color:var(--red)}
+    .hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:115px}
+    .hero-left{background:var(--green);display:flex;flex-direction:column;justify-content:center;padding:80px 72px 80px 80px;position:relative;overflow:hidden}
+    .hero-left::before{content:"ITALIA";position:absolute;bottom:-40px;left:-20px;font-family:"Cinzel",serif;font-size:10rem;font-weight:700;color:rgba(255,255,255,.04);white-space:nowrap;pointer-events:none}
+    .hero-tag{font-family:"Cinzel",serif;font-size:.58rem;letter-spacing:.38em;color:var(--gold-light);text-transform:uppercase;margin-bottom:22px;opacity:0;animation:fadeUp .8s ease .3s both}
+    .hero-title{font-family:"Playfair Display",serif;font-size:clamp(3.5rem,6vw,6rem);font-weight:900;line-height:1;color:var(--white);margin-bottom:8px;opacity:0;animation:fadeUp .8s ease .5s both}
+    .hero-title-it{font-family:"Playfair Display",serif;font-size:clamp(1rem,2.2vw,1.8rem);font-style:italic;color:var(--gold-light);margin-bottom:32px;opacity:0;animation:fadeUp .8s ease .65s both}
+    .hero-desc{font-size:1.02rem;line-height:1.9;color:rgba(255,253,247,.74);margin-bottom:44px;max-width:420px;opacity:0;animation:fadeUp .8s ease .8s both}
+    .hero-btns{display:flex;gap:14px;flex-wrap:wrap;opacity:0;animation:fadeUp .8s ease 1s both}
+    .btn-gold{background:var(--gold);color:var(--dark);padding:15px 34px;font-family:"Cinzel",serif;font-size:.66rem;letter-spacing:.17em;text-transform:uppercase;text-decoration:none;border:2px solid var(--gold);font-weight:600;transition:background .3s,color .3s,transform .3s}
+    .btn-gold:hover{background:transparent;color:var(--gold);transform:translateY(-2px)}
+    .btn-outline-white{border:2px solid rgba(255,255,255,.38);color:#fff;padding:15px 34px;font-family:"Cinzel",serif;font-size:.66rem;letter-spacing:.17em;text-transform:uppercase;text-decoration:none;transition:border-color .3s,color .3s}
+    .btn-outline-white:hover{border-color:#fff;color:var(--gold-light)}
+    .hero-right{position:relative;overflow:hidden}
+    .hero-right img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.87) saturate(1.1);animation:zoomIn 8s ease both}
+    .hero-right-overlay{position:absolute;inset:0;background:linear-gradient(to right,var(--green) 0%,transparent 25%),linear-gradient(to top,rgba(183,28,28,.33) 0%,transparent 50%)}
+    .hero-badge{position:absolute;bottom:36px;right:36px;width:108px;height:108px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;border:3px solid var(--gold);flex-direction:column}
+    .hero-badge span:first-child{font-family:"Cinzel",serif;font-size:1.7rem;font-weight:700;color:#fff;display:block;line-height:1}
+    .hero-badge span:last-child{font-size:.5rem;letter-spacing:.16em;color:var(--gold-light);text-transform:uppercase}
+    .italian-banner{background:var(--red);padding:17px 0;overflow:hidden;border-top:3px solid var(--gold);border-bottom:3px solid var(--gold)}
+    .banner-track{display:flex;gap:56px;animation:marquee 18s linear infinite;white-space:nowrap}
+    .banner-item{font-family:"Cinzel",serif;font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:18px;flex-shrink:0}
+    .banner-item .sep{color:var(--gold-light)}
+    .about{display:grid;grid-template-columns:1fr 1fr;min-height:78vh}
+    .about-img-col{position:relative;overflow:hidden}
+    .about-img-col img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s}
+    .about-img-col:hover img{transform:scale(1.04)}
+    .about-img-label{position:absolute;top:36px;left:36px;background:var(--green);color:#fff;font-family:"Cinzel",serif;font-size:.57rem;letter-spacing:.24em;padding:10px 18px;text-transform:uppercase;border-left:4px solid var(--gold)}
+    .about-content{background:var(--cream);padding:96px 68px;display:flex;flex-direction:column;justify-content:center}
+    .section-label{font-family:"Cinzel",serif;font-size:.58rem;letter-spacing:.34em;text-transform:uppercase;color:var(--red);margin-bottom:16px;display:flex;align-items:center;gap:13px}
+    .section-label::after{content:"";flex:1;max-width:56px;height:1px;background:var(--red)}
+    .about h2{font-family:"Playfair Display",serif;font-size:clamp(2rem,3.8vw,3.1rem);font-weight:700;line-height:1.15;margin-bottom:26px}
+    .about h2 em{color:var(--green);font-style:italic}
+    .about p{font-size:1.02rem;line-height:1.92;color:#4a4a3a;margin-bottom:18px}
+    .about-flags{display:flex;gap:5px;margin:28px 0;align-items:center}
+    .flag-block{height:24px;width:52px}.flag-block.g{background:var(--green)}.flag-block.w{background:#fff;border:1px solid #ddd}.flag-block.r{background:var(--red)}
+    .flag-label{font-family:"Cinzel",serif;font-size:.57rem;letter-spacing:.17em;color:var(--text-muted);margin-left:11px}
+    .about-stats{display:flex;gap:34px;padding-top:32px;border-top:1px solid rgba(0,0,0,.1)}
+    .stat{text-align:center}
+    .stat-num{font-family:"Playfair Display",serif;font-size:2.5rem;font-weight:900;color:var(--green);line-height:1}
+    .stat-num.red{color:var(--red)}
+    .stat-lbl{font-size:.68rem;letter-spacing:.1em;color:var(--text-muted);margin-top:5px;font-family:"Cinzel",serif}
+    .menu-section{background:var(--dark);padding:110px 62px;position:relative;overflow:hidden}
+    .menu-section::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(to right,var(--green) 33.3%,#fff 33.3%,#fff 66.6%,var(--red) 66.6%)}
+    .menu-header{text-align:center;margin-bottom:60px}
+    .menu-header .section-label{justify-content:center;color:var(--gold)}.menu-header .section-label::after{display:none}
+    .menu-header h2{font-family:"Playfair Display",serif;font-size:clamp(2.2rem,4.5vw,3.8rem);font-weight:900;color:var(--white);margin-top:10px}
+    .menu-header h2 em{color:var(--gold);font-style:italic}
+    .menu-header p{color:rgba(255,255,255,.38);font-size:.98rem;margin-top:12px;font-style:italic}
+    .menu-cats{display:flex;justify-content:center;gap:3px;margin-bottom:48px;flex-wrap:wrap}
+    .menu-cat{font-family:"Cinzel",serif;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;padding:11px 26px;border:1px solid rgba(255,255,255,.14);background:transparent;color:rgba(255,255,255,.46);cursor:pointer;transition:all .3s}
+    .menu-cat.active{background:var(--red);border-color:var(--red);color:#fff}
+    .menu-cat:hover:not(.active){border-color:var(--gold);color:var(--gold)}
+    .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;max-width:980px;margin:0 auto}
+    .menu-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);padding:34px 38px;display:flex;flex-direction:column;gap:9px;transition:background .3s;position:relative;overflow:hidden}
+    .menu-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green);transform:scaleY(0);transition:transform .3s;transform-origin:bottom}
+    .menu-card:nth-child(even)::before{background:var(--red)}
+    .menu-card:hover{background:rgba(255,255,255,.06)}.menu-card:hover::before{transform:scaleY(1)}
+    .menu-card-top{display:flex;justify-content:space-between;align-items:baseline}
+    .menu-card-name{font-family:"Playfair Display",serif;font-size:1.18rem;font-weight:700;color:var(--white)}
+    .menu-card-price{font-family:"Playfair Display",serif;font-size:1.1rem;font-style:italic;color:var(--gold)}
+    .menu-card-it{font-size:.8rem;color:var(--green-light);font-style:italic}
+    .menu-card-desc{font-size:.85rem;color:rgba(255,255,255,.42);line-height:1.73}
+    .menu-pane{display:none}.menu-pane.active{display:block}
+    .experience{background:var(--green);padding:110px 62px}
+    .exp-header{margin-bottom:64px}
+    .exp-header .section-label{color:var(--gold-light)}.exp-header .section-label::after{background:var(--gold-light)}
+    .exp-header h2{font-family:"Playfair Display",serif;font-size:clamp(2.2rem,4.5vw,3.8rem);font-weight:900;color:#fff}
+    .exp-header h2 em{color:var(--gold-light);font-style:italic}
+    .exp-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+    .exp-card{background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.1);padding:48px 38px;transition:background .3s,transform .3s;position:relative}
+    .exp-card:hover{background:rgba(0,0,0,.33);transform:translateY(-5px)}
+    .exp-num{font-family:"Playfair Display",serif;font-size:3.8rem;font-weight:900;color:rgba(255,255,255,.06);line-height:1;position:absolute;top:14px;right:18px}
+    .exp-icon{font-size:2.2rem;margin-bottom:18px;display:block}
+    .exp-card h3{font-family:"Playfair Display",serif;font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:12px}
+    .exp-card p{font-size:.88rem;color:rgba(255,255,255,.56);line-height:1.83}
+    .exp-tag{display:inline-block;margin-top:18px;font-family:"Cinzel",serif;font-size:.57rem;letter-spacing:.17em;color:var(--gold-light);text-transform:uppercase;border-bottom:1px solid var(--gold-light);padding-bottom:2px}
+    .gallery{display:grid;grid-template-columns:1.6fr 1fr 1fr;grid-template-rows:270px 270px;gap:4px}
+    .gal-item{overflow:hidden;position:relative}
+    .gal-item:first-child{grid-row:span 2}
+    .gal-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s,filter .5s;filter:saturate(.9) brightness(.84)}
+    .gal-item:hover img{transform:scale(1.07);filter:saturate(1.2) brightness(1)}
+    .gal-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(183,28,28,.52),transparent 60%);opacity:0;transition:opacity .4s;display:flex;align-items:flex-end;padding:22px}
+    .gal-item:hover .gal-overlay{opacity:1}
+    .gal-label{font-family:"Cinzel",serif;font-size:.63rem;letter-spacing:.2em;color:#fff;text-transform:uppercase}
+    .testimonials{background:var(--cream);padding:96px 62px;border-top:5px solid var(--gold)}
+    .test-inner{max-width:1100px;margin:0 auto}
+    .test-intro{text-align:center;margin-bottom:56px}
+    .test-intro .section-label{justify-content:center}.test-intro .section-label::after{display:none}
+    .test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+    .test-card{padding:44px 34px;background:#fff;border-top:4px solid var(--green);transition:transform .3s}
+    .test-card:nth-child(2){border-top-color:var(--red)}.test-card:nth-child(3){border-top-color:var(--gold)}
+    .test-card:hover{transform:translateY(-5px)}
+    .test-stars{color:var(--gold);letter-spacing:2px;margin-bottom:16px}
+    .test-text{font-family:"Playfair Display",serif;font-size:.98rem;font-style:italic;line-height:1.73;color:var(--charcoal);margin-bottom:20px}
+    .test-author{font-family:"Cinzel",serif;font-size:.59rem;letter-spacing:.2em;color:var(--red);text-transform:uppercase}
+    .test-source{font-size:.73rem;color:var(--text-muted);margin-top:4px}
+    .reservation{display:grid;grid-template-columns:1fr 1fr}
+    .res-left{background:var(--red);padding:96px 68px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+    .res-left::before{content:"";position:absolute;bottom:-70px;right:-70px;width:380px;height:380px;border-radius:50%;border:55px solid rgba(255,255,255,.04)}
+    .res-left .section-label{color:var(--gold-light)}.res-left .section-label::after{background:var(--gold-light)}
+    .res-left h2{font-family:"Playfair Display",serif;font-size:clamp(1.9rem,3.5vw,3rem);font-weight:900;color:#fff;margin-bottom:18px}
+    .res-left h2 em{font-style:italic;color:var(--gold-light)}
+    .res-left>p{font-size:.98rem;line-height:1.88;color:rgba(255,255,255,.68);margin-bottom:32px}
+    .res-info{display:flex;flex-direction:column;gap:14px}
+    .res-info-item{display:flex;align-items:flex-start;gap:13px;padding:15px 17px;background:rgba(0,0,0,.14);border-left:3px solid var(--gold)}
+    .res-info-icon{font-size:1.25rem}
+    .res-info-text h4{font-family:"Cinzel",serif;font-size:.58rem;letter-spacing:.2em;color:var(--gold-light);text-transform:uppercase;margin-bottom:3px}
+    .res-info-text p{font-size:.83rem;color:rgba(255,255,255,.63);line-height:1.58;margin:0}
+    .res-right{background:var(--cream);padding:96px 68px;display:flex;flex-direction:column;justify-content:center}
+    .res-right h3{font-family:"Playfair Display",serif;font-size:1.9rem;font-weight:700;margin-bottom:30px}
+    .res-right h3 em{color:var(--green);font-style:italic}
+    .res-form{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+    .res-form input,.res-form select{background:#fff;border:1px solid rgba(0,0,0,.11);border-bottom:2px solid rgba(0,0,0,.18);color:var(--dark);padding:13px 15px;font-family:"EB Garamond",serif;font-size:.93rem;width:100%;outline:none;transition:border-color .3s}
+    .res-form input::placeholder{color:#aaa}
+    .res-form input:focus,.res-form select:focus{border-bottom-color:var(--green)}
+    .res-form .full{grid-column:span 2}
+    .res-submit{grid-column:span 2;background:var(--green);border:none;color:#fff;padding:17px;font-family:"Cinzel",serif;font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;font-weight:600;transition:background .3s,transform .3s;margin-top:5px}
+    .res-submit:hover{background:var(--green-mid);transform:translateY(-2px)}
+    footer{background:var(--dark);padding:76px 62px 38px;border-top:5px solid transparent;border-image:linear-gradient(to right,var(--green) 33.3%,#fff 33.3%,#fff 66.6%,var(--red) 66.6%) 1}
+    .footer-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:56px;margin-bottom:56px}
+    .footer-logo{font-family:"Cinzel",serif;font-size:1.8rem;font-weight:700;color:var(--white);margin-bottom:4px}
+    .footer-logo span{color:var(--green)}
+    .footer-logo-it{font-family:"EB Garamond",serif;font-style:italic;font-size:.97rem;color:var(--gold);margin-bottom:16px}
+    .footer-brand-desc{font-size:.85rem;color:rgba(255,255,255,.36);line-height:1.83}
+    .footer-col h4{font-family:"Cinzel",serif;font-size:.57rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.07)}
+    .footer-col ul{list-style:none}
+    .footer-col ul li{margin-bottom:11px;font-size:.85rem;color:rgba(255,255,255,.4);line-height:1.68}
+    .footer-col ul li a{color:rgba(255,255,255,.4);text-decoration:none;transition:color .3s}
+    .footer-col ul li a:hover{color:var(--gold)}
+    .footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:28px;display:flex;justify-content:space-between;align-items:center}
+    .footer-copy{font-size:.71rem;color:rgba(255,255,255,.2);letter-spacing:.05em}
+    .footer-socials{display:flex;gap:18px}
+    .footer-socials a{font-family:"Cinzel",serif;font-size:.57rem;letter-spacing:.14em;color:rgba(255,255,255,.28);text-decoration:none;transition:color .3s;text-transform:uppercase}
+    .footer-socials a:hover{color:var(--gold)}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes zoomIn{from{transform:scale(1.06)}to{transform:scale(1)}}
+    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+    .hamburger span{display:block;width:24px;height:2px;background:var(--charcoal);transition:all .3s}
+    .mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,253,247,0.98);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:36px}
+    .mobile-menu.open{display:flex}
+    .mobile-menu a{font-family:'Cinzel',serif;font-size:1.2rem;letter-spacing:.2em;text-transform:uppercase;color:var(--charcoal);text-decoration:none;transition:color .3s}
+    .mobile-menu a:hover{color:var(--red)}
+    .mobile-menu .close-btn{position:absolute;top:60px;right:24px;font-size:1.8rem;cursor:pointer;background:none;border:none;color:var(--charcoal)}
+    .mobile-menu .mob-cta{background:var(--red);color:#fff;padding:14px 36px;font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border:none;margin-top:8px}
+    @media(max-width:960px){.hamburger{display:flex}}
+    @media(min-width:601px) and (max-width:960px){
+      .lang-bar{padding:7px 28px}
+      nav{padding:15px 28px}
+      .nav-links{display:none}
+      .nav-cta{padding:10px 18px;font-size:.6rem}
+      .hero{grid-template-columns:1fr}
+      .hero-left{padding:60px 48px;min-height:55vh}
+      .hero-right{height:340px}
+      .hero-title{font-size:4rem}
+      .about{grid-template-columns:1fr}
+      .about-img-col{height:360px}
+      .about-content{padding:64px 48px}
+      .about-stats{gap:28px}
+      .menu-section,.experience,.testimonials{padding:80px 32px}
+      .menu-grid{grid-template-columns:1fr 1fr}
+      .menu-cats{gap:4px}
+      .exp-cards{grid-template-columns:1fr 1fr}
+      .exp-card:last-child{grid-column:span 2}
+      .gallery{grid-template-columns:1fr 1fr;grid-template-rows:240px 240px 240px}
+      .gal-item:first-child{grid-row:span 1;grid-column:span 2;height:280px}
+      .gal-item{height:220px}
+      .test-grid{grid-template-columns:1fr 1fr}
+      .test-card:last-child{grid-column:span 2}
+      .reservation{grid-template-columns:1fr}
+      .res-left{padding:64px 48px}
+      .res-right{padding:64px 48px}
+      .res-form{grid-template-columns:1fr 1fr}
+      .footer-top{grid-template-columns:1fr 1fr;gap:40px}
+      footer{padding:60px 32px 32px}
+      .footer-bottom{flex-direction:column;gap:16px;text-align:center}
+    }
+
+    /* ── PHONE (max 600px) ── */
+    @media(max-width:600px){
+      .lang-bar{padding:6px 16px;gap:8px}
+      .lang-label{display:none}
+      .lang-btn{padding:5px 12px;font-size:.55rem}
+      nav{padding:12px 16px;top:33px}
+      .nav-logo{font-size:1.1rem}
+      .nav-links{display:none}
+      .nav-cta{padding:9px 14px;font-size:.55rem;letter-spacing:.1em}
+      .hero{grid-template-columns:1fr;padding-top:100px}
+      .hero-left{padding:40px 20px;min-height:auto}
+      .hero-left::before{font-size:5rem}
+      .hero-title{font-size:3rem}
+      .hero-title-it{font-size:1rem}
+      .hero-desc{font-size:.92rem;margin-bottom:32px}
+      .hero-btns{flex-direction:column;gap:10px}
+      .btn-gold,.btn-outline-white{text-align:center;padding:14px 28px}
+      .hero-right{height:240px}
+      .hero-badge{width:80px;height:80px;bottom:16px;right:16px}
+      .hero-badge span:first-child{font-size:1.2rem}
+      .hero-badge span:last-child{font-size:.4rem}
+      .italian-banner{padding:12px 0}
+      .banner-item{font-size:.55rem;letter-spacing:.18em}
+      .about{grid-template-columns:1fr}
+      .about-img-col{height:250px}
+      .about-img-label{top:16px;left:16px;font-size:.5rem;padding:8px 14px}
+      .about-content{padding:40px 20px}
+      .about h2{font-size:1.8rem}
+      .about p{font-size:.95rem}
+      .about-flags{flex-wrap:wrap}
+      .about-stats{flex-direction:column;gap:20px;align-items:flex-start}
+      .stat{display:flex;align-items:baseline;gap:12px}
+      .stat-num{font-size:2rem}
+      .menu-section,.experience,.testimonials{padding:56px 16px}
+      .menu-header h2{font-size:2rem}
+      .menu-cats{flex-direction:column;align-items:stretch}
+      .menu-cat{text-align:center;padding:12px}
+      .menu-grid{grid-template-columns:1fr}
+      .menu-card{padding:24px 20px}
+      .menu-card-name{font-size:1rem}
+      .exp-header h2{font-size:2rem}
+      .exp-cards{grid-template-columns:1fr}
+      .exp-card{padding:36px 24px}
+      .gallery{grid-template-columns:1fr;grid-template-rows:auto}
+      .gal-item:first-child{grid-row:span 1;grid-column:span 1;height:220px}
+      .gal-item{height:200px}
+      .test-grid{grid-template-columns:1fr}
+      .test-card{padding:32px 24px}
+      .reservation{grid-template-columns:1fr}
+      .res-left{padding:48px 20px}
+      .res-left h2{font-size:1.8rem}
+      .res-right{padding:48px 20px}
+      .res-right h3{font-size:1.5rem}
+      .res-form{grid-template-columns:1fr}
+      .res-form .full,.res-submit{grid-column:span 1}
+      .res-info-item{flex-direction:column;gap:8px}
+      .footer-top{grid-template-columns:1fr;gap:32px}
+      footer{padding:48px 16px 28px}
+      .footer-logo{font-size:1.4rem}
+      .footer-bottom{flex-direction:column;gap:14px;text-align:center}
+      .section-label{font-size:.52rem}
+    }
+  </style>
+</head>
+<body>
+<div class="flag-stripe"><div class="s1"></div><div class="s2"></div><div class="s3"></div></div>
+<div class="lang-bar">
+  <span class="lang-label">Language</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-en" onclick="setLang('en')"><span>&#127468;&#127463;</span> English</button>
+    <div class="lang-sep"></div>
+    <button class="lang-btn" id="btn-it" onclick="setLang('it')"><span>&#127470;&#127481;</span> Italiano</button>
+  </div>
+</div>
+<nav id="navbar">
+  <a href="#" class="nav-logo">La Stellina <span class="dot">&middot;</span></a>
+  <ul class="nav-links">
+    <li><a href="#about" id="nav-story">Our Story</a></li>
+    <li><a href="#menu" id="nav-menu">Menu</a></li>
+    <li><a href="#experience" id="nav-exp">Experience</a></li>
+    <li><a href="#gallery" id="nav-gallery">Gallery</a></li>
+  </ul>
+  <a href="#reservation" class="nav-cta" id="nav-cta">Reserve a Table</a>
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="close-btn" onclick="toggleMenu()">✕</button>
+  <a href="#about" onclick="toggleMenu()" id="mob-story">Our Story</a>
+  <a href="#menu" onclick="toggleMenu()" id="mob-menu">Menu</a>
+  <a href="#experience" onclick="toggleMenu()" id="mob-exp">Experience</a>
+  <a href="#gallery" onclick="toggleMenu()" id="mob-gallery">Gallery</a>
+  <a href="#reservation" onclick="toggleMenu()" class="mob-cta" id="mob-cta">Reserve a Table</a>
+</div>
+<section class="hero" id="hero">
+  <div class="hero-left">
+    <p class="hero-tag" id="hero-tag">&#10022; Italian Restaurant &middot; Est. 1987 &middot; Florence &#10022;</p>
+    <h1 class="hero-title">La Stellina</h1>
+    <p class="hero-title-it" id="hero-title-it">The authentic taste of Italy</p>
+    <p class="hero-desc" id="hero-desc">Where the soul of Tuscany meets the art of fine dining. Every dish is a love letter to Italy &mdash; crafted with passion, served with pride.</p>
+    <div class="hero-btns">
+      <a href="#reservation" class="btn-gold" id="hero-btn1">Reserve Now</a>
+      <a href="#menu" class="btn-outline-white" id="hero-btn2">Explore the Menu</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=85" alt="Fine Italian dining"/>
+    <div class="hero-right-overlay"></div>
+    <div class="hero-badge"><span>2&#9733;</span><span>Michelin</span></div>
+  </div>
+</section>
+<div class="italian-banner">
+  <div class="banner-track">
+    <div class="banner-item">Cucina Autentica <span class="sep">&#10022;</span></div>
+    <div class="banner-item">Vini Pregiati <span class="sep">&#10022;</span></div>
+    <div class="banner-item">Ingredienti Freschi <span class="sep">&#10022;</span></div>
+    <div class="banner-item">Tradizione Italiana <span class="sep">&#10022;</span></div>
+    <div class="banner-item">Chef Stellato <span class="sep">&#10022;</span></div>
+    <div class="banner-item">Est. 1987 &middot; Firenze <span class="sep">&#10022;</span></div>
+    <div class="banner-item">Cucina Autentica <span class="sep">&#10022;</span></div>
+    <div class="banner-item">Vini Pregiati <span class="sep">&#10022;</span></div>
+    <div class="banner-item">Ingredienti Freschi <span class="sep">&#10022;</span></div>
+    <div class="banner-item">Tradizione Italiana <span class="sep">&#10022;</span></div>
+    <div class="banner-item">Chef Stellato <span class="sep">&#10022;</span></div>
+    <div class="banner-item">Est. 1987 &middot; Firenze <span class="sep">&#10022;</span></div>
+  </div>
+</div>
+<section class="about" id="about">
+  <div class="about-img-col">
+    <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=900&q=80" alt="Chef"/>
+    <div class="about-img-label" id="img-chef-label">Our Chef</div>
+  </div>
+  <div class="about-content">
+    <p class="section-label reveal" id="about-label">Our Story</p>
+    <h2 class="reveal" id="about-h2">A <em>Passion</em> 37 years in the making</h2>
+    <p class="reveal" id="about-p1">Born in the rolling hills of Tuscany, La Stellina was founded in 1987 by the Ferretti family on one belief &mdash; that food is the most honest expression of love. We started as a small trattoria on Via della Luce, serving the neighbors who became family.</p>
+    <p class="reveal" id="about-p2">Today our kitchen blends the warmth of an Italian grandmother&#39;s table with the precision of two Michelin stars. Every pasta is hand-cut. Every sauce is slow-simmered. Every plate carries the heart of Italy.</p>
+    <div class="about-flags reveal">
+      <div class="flag-block g"></div><div class="flag-block w"></div><div class="flag-block r"></div>
+      <span class="flag-label" id="about-flag-label">Proudly Italian Since 1987</span>
+    </div>
+    <div class="about-stats reveal">
+      <div class="stat"><div class="stat-num">37</div><div class="stat-lbl" id="stat1-lbl">Years of Excellence</div></div>
+      <div class="stat"><div class="stat-num red">2</div><div class="stat-lbl" id="stat2-lbl">Michelin Stars</div></div>
+      <div class="stat"><div class="stat-num">140+</div><div class="stat-lbl" id="stat3-lbl">Wines Curated</div></div>
+    </div>
+  </div>
+</section>
+<section class="menu-section" id="menu">
+  <div class="menu-header">
+    <p class="section-label" id="menu-label">Our Menu</p>
+    <h2 id="menu-h2">Seasonal &amp; <em>Authentic</em></h2>
+    <p id="menu-sub">Each dish celebrates the season &mdash; sourced from the finest Italian producers.</p>
+  </div>
+  <div class="menu-cats">
+    <button class="menu-cat active" id="cat1" onclick="switchMenu('antipasti',this)">Starters</button>
+    <button class="menu-cat" id="cat2" onclick="switchMenu('primi',this)">First Courses</button>
+    <button class="menu-cat" id="cat3" onclick="switchMenu('secondi',this)">Main Courses</button>
+    <button class="menu-cat" id="cat4" onclick="switchMenu('dolci',this)">Desserts</button>
+  </div>
+  <div id="antipasti" class="menu-pane active"><div class="menu-grid">
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Carpaccio di Manzo</span><span class="menu-card-price">&euro;24</span></div><div class="menu-card-it">Beef Carpaccio</div><div class="menu-card-desc">Paper-thin Chianina beef, black truffle oil, Parmigiano Reggiano DOP, wild rocket, Amalfi lemon.</div></div>
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Burrata della Casa</span><span class="menu-card-price">&euro;19</span></div><div class="menu-card-it">House Burrata</div><div class="menu-card-desc">Fresh Pugliese burrata, heirloom tomatoes, 25-year aged balsamic di Modena, Sicilian basil.</div></div>
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Capesante al Tartufo</span><span class="menu-card-price">&euro;34</span></div><div class="menu-card-it">Scallops with Truffle</div><div class="menu-card-desc">Pan-seared Adriatic scallops, black truffle cream, crispy guanciale, sweet pea pur&eacute;e.</div></div>
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Insalata di Polpo</span><span class="menu-card-price">&euro;22</span></div><div class="menu-card-it">Grilled Octopus Salad</div><div class="menu-card-desc">Slow-cooked chargrilled polpo, Pantelleria capers, Castelvetrano olives, potato, salsa verde.</div></div>
+  </div></div>
+  <div id="primi" class="menu-pane"><div class="menu-grid">
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Tagliolini al Tartufo Nero</span><span class="menu-card-price">&euro;46</span></div><div class="menu-card-it">Black Truffle Tagliolini</div><div class="menu-card-desc">Hand-cut egg pasta, fresh Norcia black truffle, aged mountain butter, 36-month Parmigiano.</div></div>
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Risotto alla Milanese</span><span class="menu-card-price">&euro;36</span></div><div class="menu-card-it">Saffron Risotto</div><div class="menu-card-desc">Carnaroli rice, Zafferano dell&#39;Aquila, veal bone marrow, Grana Padano, Franciacorta reduction.</div></div>
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Pappardelle al Cinghiale</span><span class="menu-card-price">&euro;38</span></div><div class="menu-card-it">Wild Boar Pappardelle</div><div class="menu-card-desc">Wide bronze-drawn egg pasta, slow-braised Maremma wild boar, juniper, rosemary, pecorino.</div></div>
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Gnocchi di Ricotta</span><span class="menu-card-price">&euro;32</span></div><div class="menu-card-it">Ricotta Gnocchi</div><div class="menu-card-desc">Pillowy sheep ricotta gnocchi, San Marzano DOP tomato, stracciatella di bufala, Ligurian basil.</div></div>
+  </div></div>
+  <div id="secondi" class="menu-pane"><div class="menu-grid">
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Filetto di Chianina</span><span class="menu-card-price">&euro;72</span></div><div class="menu-card-it">Chianina Beef Fillet</div><div class="menu-card-desc">45-day dry-aged Chianina tenderloin, Barolo reduction, porcini trifolati, radicchio di Treviso.</div></div>
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Branzino al Sale</span><span class="menu-card-price">&euro;54</span></div><div class="menu-card-it">Salt-Baked Sea Bass</div><div class="menu-card-desc">Whole Adriatic branzino in herb salt crust, Ligurian olives, Datterini tomatoes, salmoriglio.</div></div>
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Agnello della Sardegna</span><span class="menu-card-price">&euro;62</span></div><div class="menu-card-it">Sardinian Lamb Rack</div><div class="menu-card-desc">Rack of Sardinian milk lamb, minted Barolo jus, roasted black garlic, artichoke alla romana.</div></div>
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Piccione Arrosto</span><span class="menu-card-price">&euro;58</span></div><div class="menu-card-it">Roasted Wood Pigeon</div><div class="menu-card-desc">Umbrian wood pigeon, foie gras farce, morel mushrooms, black garlic pur&eacute;e, Sagrantino jus.</div></div>
+  </div></div>
+  <div id="dolci" class="menu-pane"><div class="menu-grid">
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">TiramiS&ugrave; della Nonna</span><span class="menu-card-price">&euro;16</span></div><div class="menu-card-it">Grandmother&#39;s TiramiS&ugrave;</div><div class="menu-card-desc">Original 1987 family recipe: Savoiardo, mascarpone, Illy espresso, aged Marsala, Valrhona cocoa.</div></div>
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Panna Cotta al Limone</span><span class="menu-card-price">&euro;14</span></div><div class="menu-card-it">Lemon Panna Cotta</div><div class="menu-card-desc">Amalfi Coast lemon panna cotta, Amarena cherry compote, candied zest, crispy meringue.</div></div>
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Souffl&eacute; al Cioccolato</span><span class="menu-card-price">&euro;18</span></div><div class="menu-card-it">Chocolate Souffl&eacute;</div><div class="menu-card-desc">Valrhona 70% dark chocolate souffl&eacute;, Piedmont hazelnut gelato. Please allow 18 minutes.</div></div>
+    <div class="menu-card"><div class="menu-card-top"><span class="menu-card-name">Formaggi Italiani</span><span class="menu-card-price">&euro;22</span></div><div class="menu-card-it">Italian Cheese Board</div><div class="menu-card-desc">Regional cheeses: Gorgonzola, Pecorino Sardo, Taleggio, fig jam, honeycomb, walnut bread.</div></div>
+  </div></div>
+</section>
+<section class="experience" id="experience">
+  <div class="exp-header reveal">
+    <p class="section-label" id="exp-label">Our Experience</p>
+    <h2 id="exp-h2">Beyond the <em>Plate</em></h2>
+  </div>
+  <div class="exp-cards">
+    <div class="exp-card reveal"><span class="exp-num">01</span><span class="exp-icon">&#127863;</span><h3 id="exp1-title">Wine Cellar</h3><p id="exp1-p">Over 140 labels curated by our sommelier &mdash; Barolo, Brunello, Amarone, Supertuscans &mdash; alongside rare French and Spanish bottles from legendary estates.</p><span class="exp-tag" id="exp1-tag">Explore the Cellar &rarr;</span></div>
+    <div class="exp-card reveal"><span class="exp-num">02</span><span class="exp-icon">&#128104;&#8205;&#127859;</span><h3 id="exp2-title">Chef&#39;s Table</h3><p id="exp2-p">An intimate eight-seat experience inside our kitchen. Watch Chef Marco Ferretti craft a bespoke eight-course tasting menu paired with wines selected for each dish.</p><span class="exp-tag" id="exp2-tag">Book the Experience &rarr;</span></div>
+    <div class="exp-card reveal"><span class="exp-num">03</span><span class="exp-icon">&#127807;</span><h3 id="exp3-title">Private Room</h3><p id="exp3-p">The Giardino Room hosts up to 24 guests for private events, corporate dinners, and celebrations &mdash; fully bespoke menus crafted around your occasion.</p><span class="exp-tag" id="exp3-tag">Request Information &rarr;</span></div>
+  </div>
+</section>
+<div class="gallery" id="gallery">
+  <div class="gal-item"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80" alt="Sala"/><div class="gal-overlay"><span class="gal-label">La Sala</span></div></div>
+  <div class="gal-item"><img src="https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=600&q=80" alt="Pasta"/><div class="gal-overlay"><span class="gal-label">La Pasta</span></div></div>
+  <div class="gal-item"><img src="https://images.unsplash.com/photo-1611270629569-8b357cb88da9?w=600&q=80" alt="Piatto"/><div class="gal-overlay"><span class="gal-label">Il Piatto</span></div></div>
+  <div class="gal-item"><img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80" alt="Carne"/><div class="gal-overlay"><span class="gal-label">La Carne</span></div></div>
+  <div class="gal-item"><img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80" alt="Vino"/><div class="gal-overlay"><span class="gal-label">Il Vino</span></div></div>
+</div>
+<section class="testimonials">
+  <div class="test-inner">
+    <div class="test-intro"><p class="section-label reveal" id="test-label">What Our Guests Say</p></div>
+    <div class="test-grid">
+      <div class="test-card reveal"><div class="test-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="test-text">&ldquo;La Stellina does not merely feed you &mdash; it transports you. Each dish is a love letter written in butter and devotion.&rdquo;</p><div class="test-author">Marco Pellegrini</div><div class="test-source">The Fine Dining Review, 2024</div></div>
+      <div class="test-card reveal"><div class="test-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="test-text">&ldquo;Authentic, soulful, and precise. The tagliolini al tartufo was the finest pasta I have eaten in twenty years of food writing.&rdquo;</p><div class="test-author">Sophia Laurent</div><div class="test-source">Le Monde Gastronomique, 2024</div></div>
+      <div class="test-card reveal"><div class="test-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="test-text">&ldquo;You taste the history in every bite. This is what Italian food is supposed to feel like &mdash; generous, proud, and impossibly delicious.&rdquo;</p><div class="test-author">James Holloway</div><div class="test-source">The Guardian Food, 2023</div></div>
+    </div>
+  </div>
+</section>
+<section class="reservation" id="reservation">
+  <div class="res-left">
+    <p class="section-label" id="res-label">Reserve</p>
+    <h2 id="res-h2">Reserve your <em>Evening</em></h2>
+    <p id="res-p">We welcome guests Tuesday through Sunday. For parties larger than eight, or for private dining, please contact us directly.</p>
+    <div class="res-info">
+      <div class="res-info-item"><span class="res-info-icon">&#128341;</span><div class="res-info-text"><h4 id="info1-h">Opening Hours</h4><p id="info1-p">Tue&ndash;Thu: 18:00&ndash;22:00 &middot; Fri&ndash;Sat: 18:00&ndash;23:00<br/>Sunday: 17:30&ndash;21:30 &middot; Monday: Closed</p></div></div>
+      <div class="res-info-item"><span class="res-info-icon">&#128205;</span><div class="res-info-text"><h4 id="info2-h">Location</h4><p id="info2-p">12 Via della Luce, Florence, Italy 50100</p></div></div>
+      <div class="res-info-item"><span class="res-info-icon">&#128222;</span><div class="res-info-text"><h4 id="info3-h">Contact</h4><p id="info3-p">+39 055 123 4567 &middot; info@lastellina.it</p></div></div>
+    </div>
+  </div>
+  <div class="res-right">
+    <h3 id="res-form-h">Make a <em>Reservation</em></h3>
+    <div class="res-form">
+      <input type="text" id="f-nome" placeholder="First Name"/>
+      <input type="text" id="f-cognome" placeholder="Last Name"/>
+      <input type="email" id="f-email" placeholder="Email" class="full"/>
+      <input type="tel" id="f-tel" placeholder="Phone"/>
+      <input type="date"/>
+      <select id="f-time-sel"><option value="" disabled selected>Time</option><option>18:00</option><option>18:30</option><option>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option></select>
+      <select id="f-guests-sel"><option value="" disabled selected>Number of Guests</option><option>1 Guest</option><option>2 Guests</option><option>3 Guests</option><option>4 Guests</option><option>5 Guests</option><option>6 Guests</option><option>7-8 Guests</option></select>
+      <input type="text" id="f-note" placeholder="Special requests (optional)" class="full"/>
+      <button class="res-submit" id="f-submit">Send Reservation</button>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo"><span>La</span> Stellina</div>
+      <div class="footer-logo-it">Ristorante Italiano &middot; Firenze</div>
+      <p class="footer-brand-desc">A celebration of Italian culinary heritage since 1987. Fine dining crafted with passion, tradition, and the finest seasonal ingredients from across Italy.</p>
+    </div>
+    <div class="footer-col"><h4 id="footer-nav-h">Navigate</h4><ul><li><a href="#about" id="fn1">Our Story</a></li><li><a href="#menu" id="fn2">The Menu</a></li><li><a href="#experience" id="fn3">Experience</a></li><li><a href="#gallery" id="fn4">Gallery</a></li><li><a href="#reservation" id="fn5">Reserve</a></li></ul></div>
+    <div class="footer-col"><h4 id="footer-hours-h">Hours</h4><ul><li id="fh1">Tuesday &ndash; Thursday<br/>18:00 &ndash; 22:00</li><li id="fh2">Friday &ndash; Saturday<br/>18:00 &ndash; 23:00</li><li id="fh3">Sunday<br/>17:30 &ndash; 21:30</li><li id="fh4">Monday &mdash; Closed</li></ul></div>
+    <div class="footer-col"><h4 id="footer-contact-h">Contact</h4><ul><li>12 Via della Luce<br/>Firenze, Italia 50100</li><li>+39 055 123 4567</li><li>info@lastellina.it</li><li>www.lastellina.it</li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy" id="footer-copy">&copy; 2024 La Stellina Restaurant. All rights reserved.</p>
+    <div class="footer-socials"><a href="#">Instagram</a><a href="#">Facebook</a><a href="#">TripAdvisor</a></div>
+  </div>
+</footer>
+<script>
+const nav=document.getElementById("navbar");
+window.addEventListener("scroll",()=>nav.classList.toggle("scrolled",window.scrollY>60));
+function toggleMenu(){document.getElementById("mobileMenu").classList.toggle("open");document.body.style.overflow=document.getElementById("mobileMenu").classList.contains("open")?"hidden":"";}
+function switchMenu(id,btn){document.querySelectorAll(".menu-pane").forEach(p=>p.classList.remove("active"));document.querySelectorAll(".menu-cat").forEach(b=>b.classList.remove("active"));document.getElementById(id).classList.add("active");btn.classList.add("active")}
+const obs=new IntersectionObserver((entries)=>{entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add("visible"),i*80)})},{threshold:.12});
+document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));
+const T={en:{"nav-story":"Our Story","nav-menu":"Menu","nav-exp":"Experience","nav-gallery":"Gallery","nav-cta":"Reserve a Table","hero-tag":"&#10022; Italian Restaurant &middot; Est. 1987 &middot; Florence &#10022;","hero-title-it":"The authentic taste of Italy","hero-desc":"Where the soul of Tuscany meets the art of fine dining. Every dish is a love letter to Italy &mdash; crafted with passion, served with pride.","hero-btn1":"Reserve Now","hero-btn2":"Explore the Menu","about-label":"Our Story","about-h2":"A <em>Passion</em> 37 years in the making","about-p1":"Born in the rolling hills of Tuscany, La Stellina was founded in 1987 by the Ferretti family on one belief &mdash; that food is the most honest expression of love. We started as a small trattoria on Via della Luce, serving the neighbors who became family.","about-p2":"Today our kitchen blends the warmth of an Italian grandmother&#39;s table with the precision of two Michelin stars. Every pasta is hand-cut. Every sauce is slow-simmered. Every plate carries the heart of Italy.","about-flag-label":"Proudly Italian Since 1987","stat1-lbl":"Years of Excellence","stat2-lbl":"Michelin Stars","stat3-lbl":"Wines Curated","menu-label":"Our Menu","menu-h2":"Seasonal &amp; <em>Authentic</em>","menu-sub":"Each dish celebrates the season &mdash; sourced from the finest Italian producers.","cat1":"Starters","cat2":"First Courses","cat3":"Main Courses","cat4":"Desserts","exp-label":"Our Experience","exp-h2":"Beyond the <em>Plate</em>","exp1-title":"Wine Cellar","exp1-p":"Over 140 labels curated by our sommelier &mdash; Barolo, Brunello, Amarone, Supertuscans &mdash; alongside rare French and Spanish bottles from legendary estates.","exp1-tag":"Explore the Cellar &rarr;","exp2-title":"Chef&#39;s Table","exp2-p":"An intimate eight-seat experience inside our kitchen. Watch Chef Marco Ferretti craft a bespoke eight-course tasting menu paired with wines selected for each dish.","exp2-tag":"Book the Experience &rarr;","exp3-title":"Private Room","exp3-p":"The Giardino Room hosts up to 24 guests for private events, corporate dinners, and celebrations &mdash; fully bespoke menus crafted around your occasion.","exp3-tag":"Request Information &rarr;","test-label":"What Our Guests Say","res-label":"Reserve","res-h2":"Reserve your <em>Evening</em>","res-p":"We welcome guests Tuesday through Sunday. For parties larger than eight, or for private dining, please contact us directly.","info1-h":"Opening Hours","info1-p":"Tue&ndash;Thu: 18:00&ndash;22:00 &middot; Fri&ndash;Sat: 18:00&ndash;23:00<br/>Sunday: 17:30&ndash;21:30 &middot; Monday: Closed","info2-h":"Location","info2-p":"12 Via della Luce, Florence, Italy 50100","info3-h":"Contact","info3-p":"+39 055 123 4567 &middot; info@lastellina.it","res-form-h":"Make a <em>Reservation</em>","ph-nome":"First Name","ph-cognome":"Last Name","ph-email":"Email","ph-tel":"Phone","ph-note":"Special requests (optional)","f-submit":"Send Reservation","f-time":"Time","f-guests":"Number of Guests","g1":"1 Guest","g2":"2 Guests","g3":"3 Guests","g4":"4 Guests","g5":"5 Guests","g6":"6 Guests","g7":"7-8 Guests","footer-nav-h":"Navigate","footer-hours-h":"Hours","footer-contact-h":"Contact","fn1":"Our Story","fn2":"The Menu","fn3":"Experience","fn4":"Gallery","fn5":"Reserve","fh1":"Tuesday &ndash; Thursday<br/>18:00 &ndash; 22:00","fh2":"Friday &ndash; Saturday<br/>18:00 &ndash; 23:00","fh3":"Sunday<br/>17:30 &ndash; 21:30","fh4":"Monday &mdash; Closed","footer-copy":"&copy; 2024 La Stellina Restaurant. All rights reserved.","img-chef-label":"Our Chef"},it:{"nav-story":"La Nostra Storia","nav-menu":"Men&ugrave;","nav-exp":"Esperienza","nav-gallery":"Galleria","nav-cta":"Prenota un Tavolo","hero-tag":"&#10022; Ristorante Italiano &middot; Est. 1987 &middot; Firenze &#10022;","hero-title-it":"Il gusto autentico dell&#39;Italia","hero-desc":"Dove l&#39;anima della Toscana incontra l&#39;arte della cucina raffinata. Ogni piatto &egrave; una lettera d&#39;amore all&#39;Italia &mdash; creato con passione, servito con orgoglio.","hero-btn1":"Prenota Ora","hero-btn2":"Scopri il Men&ugrave;","about-label":"La Nostra Storia","about-h2":"Una <em>Passione</em> che dura da 37 anni","about-p1":"Nata tra le colline della Toscana, La Stellina fu fondata nel 1987 dalla famiglia Ferretti su una sola convinzione &mdash; che il cibo sia l&#39;espressione pi&ugrave; onesta dell&#39;amore. Abbiamo iniziato come piccola trattoria in Via della Luce.","about-p2":"Oggi la nostra cucina unisce il calore della tavola di una nonna italiana con la precisione di due stelle Michelin. Ogni pasta &egrave; fatta a mano. Ogni sugo &egrave; cotto lentamente.","about-flag-label":"Orgogliosamente Italiani dal 1987","stat1-lbl":"Anni di Eccellenza","stat2-lbl":"Stelle Michelin","stat3-lbl":"Vini in Cantina","menu-label":"Il Nostro Men&ugrave;","menu-h2":"Stagionale &amp; <em>Autentico</em>","menu-sub":"Ogni piatto celebra la stagione &mdash; dai migliori produttori italiani.","cat1":"Antipasti","cat2":"Primi Piatti","cat3":"Secondi","cat4":"Dolci","exp-label":"La Nostra Esperienza","exp-h2":"Oltre il <em>Piatto</em>","exp1-title":"Cantina dei Vini","exp1-p":"Oltre 140 etichette curate dal nostro sommelier &mdash; Barolo, Brunello, Amarone, Supertuscani &mdash; insieme a rare bottiglie francesi e spagnole da tenute leggendarie.","exp1-tag":"Esplora la Cantina &rarr;","exp2-title":"Tavolo dello Chef","exp2-p":"Un&#39;esperienza intima per otto persone dentro la nostra cucina. Guarda lo Chef Marco Ferretti creare un men&ugrave; degustazione su misura di otto portate.","exp2-tag":"Prenota l&#39;Esperienza &rarr;","exp3-title":"Sala Privata","exp3-p":"La Sala Giardino ospita fino a 24 persone per eventi privati, cene aziendali e celebrazioni &mdash; men&ugrave; completamente su misura per la tua occasione.","exp3-tag":"Richiedi Informazioni &rarr;","test-label":"Cosa Dicono di Noi","res-label":"Prenota","res-h2":"Riserva la tua <em>Serata</em>","res-p":"Accogliamo gli ospiti dal marted&igrave; alla domenica. Per gruppi superiori a otto persone o per cene private, contattaci direttamente.","info1-h":"Orari di Apertura","info1-p":"Mar&ndash;Gio: 18:00&ndash;22:00 &middot; Ven&ndash;Sab: 18:00&ndash;23:00<br/>Domenica: 17:30&ndash;21:30 &middot; Luned&igrave;: Chiuso","info2-h":"Dove Siamo","info2-p":"12 Via della Luce, Firenze, Italia 50100","info3-h":"Contatti","info3-p":"+39 055 123 4567 &middot; info@lastellina.it","res-form-h":"Fai una <em>Prenotazione</em>","ph-nome":"Nome","ph-cognome":"Cognome","ph-email":"Email","ph-tel":"Telefono","ph-note":"Richieste speciali (opzionale)","f-submit":"Invia Prenotazione","f-time":"Orario","f-guests":"Numero di Ospiti","g1":"1 Ospite","g2":"2 Ospiti","g3":"3 Ospiti","g4":"4 Ospiti","g5":"5 Ospiti","g6":"6 Ospiti","g7":"7-8 Ospiti","footer-nav-h":"Naviga","footer-hours-h":"Orari","footer-contact-h":"Contatti","fn1":"La Nostra Storia","fn2":"Il Men&ugrave;","fn3":"Esperienza","fn4":"Galleria","fn5":"Prenota","fh1":"Marted&igrave; &ndash; Gioved&igrave;<br/>18:00 &ndash; 22:00","fh2":"Venerd&igrave; &ndash; Sabato<br/>18:00 &ndash; 23:00","fh3":"Domenica<br/>17:30 &ndash; 21:30","fh4":"Luned&igrave; &mdash; Chiuso","footer-copy":"&copy; 2024 La Stellina Ristorante. Tutti i diritti riservati.","img-chef-label":"Il Nostro Chef"}};
+function setLang(lang){const t=T[lang];document.getElementById("btn-en").classList.toggle("active",lang==="en");document.getElementById("btn-it").classList.toggle("active",lang==="it");["nav-story","nav-menu","nav-exp","nav-gallery","nav-cta","hero-tag","hero-title-it","hero-desc","hero-btn1","hero-btn2","about-label","about-h2","about-p1","about-p2","about-flag-label","stat1-lbl","stat2-lbl","stat3-lbl","menu-label","menu-h2","menu-sub","cat1","cat2","cat3","cat4","exp-label","exp-h2","exp1-title","exp1-p","exp1-tag","exp2-title","exp2-p","exp2-tag","exp3-title","exp3-p","exp3-tag","test-label","res-label","res-h2","res-p","info1-h","info1-p","info2-h","info2-p","info3-h","info3-p","res-form-h","f-submit","footer-nav-h","footer-hours-h","footer-contact-h","fn1","fn2","fn3","fn4","fn5","fh1","fh2","fh3","fh4","footer-copy","img-chef-label"].forEach(id=>{const el=document.getElementById(id);if(el&&t[id])el.innerHTML=t[id]});document.getElementById("f-nome").placeholder=t["ph-nome"];document.getElementById("f-cognome").placeholder=t["ph-cognome"];document.getElementById("f-email").placeholder=t["ph-email"];document.getElementById("f-tel").placeholder=t["ph-tel"];document.getElementById("f-note").placeholder=t["ph-note"];const ts=document.getElementById("f-time-sel");ts.options[0].text=t["f-time"];const gs=document.getElementById("f-guests-sel");gs.options[0].text=t["f-guests"];for(let i=1;i<=7;i++)gs.options[i].text=t["g"+i]}
+</script>
+</body>
+</html>
