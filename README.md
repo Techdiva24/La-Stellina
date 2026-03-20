@@ -16,7 +16,7 @@ A fully responsive concept website for a fine dining Italian restaurant.
 HTML5 · CSS3 · Vanilla JavaScript · Google Fonts
 
 ## Live Demo
-https://yourusername.github.io/la-stellina
+https://techdiva24.github.io/La-Stellina/
 
 ## Purpose
 This is a portfolio project built to demonstrate front-end web development skills for freelance clients.
